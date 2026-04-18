@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小米电视去开机广告，开机默认当贝桌面+电视系统精简保姆级教程（小米通用）</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/images.css">
+    <link rel="stylesheet" href="../css/markdown.css">
+</head>
+<body>
+    <header>
+        <h1>小米电视去开机广告，开机默认当贝桌面+电视系统精简保姆级教程（小米通用）</h1>
+        <nav>
+            <ul>
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="#about">关于</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article class="markdown-content">
+            <h2>小米电视去开机广告，开机默认当贝桌面+电视系统精简保姆级教程（小米通用）</h2>
+            <p>发布日期: 2026-04-18</p>
+            <div id="markdown-content">
+> 原文地址：<https://zhuanlan.zhihu.com/p/601543380>
+>
+> 原文作者：海龙呀
+
+
+![](/img/202604/xiaomi-tv-remove-boot-ads-dangbei-launcher-debloat-guide-01.webp)
+
+![](/img/202604/xiaomi-tv-remove-boot-ads-dangbei-launcher-debloat-guide-02.webp)
+
+最近在用小米电视的时候，真的不胜其烦，不仅开机广告时长越来越长，桌面载入的时候还有弹窗广告，这个电视嫣然已经变成了一台广告播放机，实在忍无可忍了，准备折腾一番，于是就找到了这篇教程
+
+  
+
+
+## 前言
+
+小米电视的精简教程，分别给Mac OS 和Windows两个平台提供了解决方法。
+
+## 精简之后可以做到
+
+-   开机自启当贝桌面4.0破解版，不会因为删掉了原生桌面而卡在主屏。
+-   自定义精简系统，几乎只去除广告以及钱包商城等无关应用，并不会对系统层面，或者小米生态服务层面进行精简。
+-   可以安装当贝市场，蚂蚁市场等第三方市场。
+-   安装电视家3.0破解版，可以随意观看直播电视。无需iptv盒子
+
+### 未完善
+
+-   在某些玄学时刻亦或是玄学位置，通过安装包的形式安装软件会出现安装闪退。此时要打开当贝市场，在当贝市场的文件管理，进去扫描安装包进行安装。具体原因未知
+-   如果机身可用运行内存较低，可能出现返回桌面时当贝桌面重新加载的情况。无伤大雅。
+
+> 教程分为两部分，第一部分会分别介绍mac和win通过adb进行当贝桌面的安装和精简系统，第二部分我会介绍如何自定义adb命令自行安装和卸载应用。以及将第三方桌面设置为开机自启。
+
+## 工具
+
+-   首先你得有个小米电视（废话）
+-   下载下面的批处理文件
+-   电脑（Mac OS， windows，linux等能运行adb的设备均可）本文提供前两种方式
+-   u盘（非必要）
+
+**本站重新整理的批处理文件下载镜像**
+
+https://juse.lanzouw.com/iYTmY15z8k4j
+
+```
+文件名称: 小米电视去开机广告，开机默认当贝桌面+电视系统精简.rar
+文件大小: 20.7 MB (21,807,335 字节)
+MD5: 083C7EA675E6DDA114777D1C4E23DEE9
+SHA1: F7A2BB43B5AE142342803945D29DB9EE90BAAB29
+CRC32: C7C72619
+```
+
+## 准备工作
+
+无论是mac还是win，在开始之前先做一些准备工作吧。
+
+1.  打开小米电视，设置1.打开小米电视ADB调试：打开`设置-关于-产品型号`，选中`产品型号`按确定键`7次`，**开发者模式开启**
+1.  `设置-账号与安全`，adb调试选择`打开`，**关掉系统更新**
+1.  确保自己的电脑和电视处于同一个局域网下，为了不那么麻烦，请连接同一个wifi。
+
+在第三步没问题的情况下，打开小米电视的wifi设置，查看小米电视的wifi ip地址。并且记录下来。
+
+## 安装当贝桌面破解版+精简系统
+
+### Windows平台
+
+我们解压附件中的`windows.zip`得到如下的文件结构，为了确保不会发生玄学的事情，请尽量将文件放置在纯英文的路径下。
+
+```
+<Windows>
+├adb.exe
+├AdbWinApi.dll
+├AdbWinUsbApi.dll
+├db.bat
+├fastboot.exe
+├LMutimate.sh
+├LMutimate10.apk
+└remove.sh
+```
+
+先别着急运行，右键打开`db.bat`大家可以看到目录中没有`dangbeidesktop.apk`
+
+
+![](/img/202604/xiaomi-tv-remove-boot-ads-dangbei-launcher-debloat-guide-03.webp)
+
+不知道是不是作者漏掉了，但是别着急，我们先下载一个：<https://www.right.com.cn/forum/thread-8271769-1-1.html>
+
+镜像下载：
+
+https://juse.lanzouw.com/ixQsE15z86cd
+
+```
+包名：com.dangbei.tvlauncher
+文件名称: 当贝桌面4.1.6_完美净化版.apk
+文件大小: 18.7 MB (19,626,170 字节)
+MD5: 8D152E82DAEDF4C356B633E50C175D87
+SHA1: C16A070865EFFA4C6AACF1B776D943E3614DDDB7
+CRC32: 98446152
+```
+
+下载后重命名为`dangbeidesktop.apk`，然后把这个apk文件放到`Windows`目录里，和`db.bat`在同一目录
+
+好了，现在我们可以开始了，双击`db.bat`一路回车直到提示你输入电视ip，此时在确保准备工作的流程没有问题的情况下输入你的电视ip，回车，注意电视上一定会要你确认usb调试，先勾选允许，再勾选确认。等待程序运行结束。重启电视。
+
+### Mac OS平台
+
+MacOS 同理，解压得到如下文件结构，先查看使用教程。
+
+```
+<mac>
+├adb
+├dianshijia.sh
+├LMutimate.sh
+├LMutimate10.apk
+├remove.sh
+└使用教程.txt
+```
+
+打开`terminal`，cd到`remote.sh`所在的文件夹
+
+
+![](/img/202604/xiaomi-tv-remove-boot-ads-dangbei-launcher-debloat-guide-04.webp)
+
+在terminal中输入`chmod a=rwx ./remove.sh ./adb`目的是为了将其变为可以执行的文件。
+
+
+![](/img/202604/xiaomi-tv-remove-boot-ads-dangbei-launcher-debloat-guide-05.webp)
+
+随后执行 `./remove.sh`
+
+如windows教程一样，先做完准备工作，在remove.sh中输入你的电视ip，然后等待程序结束重启电视，就得到了一个精简版本的系统。
+
+## 自定义精简、安装应用+第三方桌面开机自启
+
+### Win
+
+首先我们右键文本方式打开批处理文件
+
+
+![](/img/202604/xiaomi-tv-remove-boot-ads-dangbei-launcher-debloat-guide-06.webp)
+
+我们可以看到在db.bat中，分为三个部分：
+
+-   序号①代表了连接电视的adb命令
+-   序号②代表了安装应用的adb命令
+-   序号③代表了删除应用的adb命令
+
+序号②以及序号③可以自行删除或者更改
+
+如果我们想要安装`LMutimate.apk`。
+
+1.  下载其安装包放在adb文件夹下，改名`LMutimate.apk`。
+1.  打开我提供的`LMutimate.bat`
+1.  为我们只需要将序号②中的install后面写上`LMutimate.apk`保存即可。
+1.  双击`LMutimate.bat`输入电视ip就可以了。
+1.  在压缩包中，我已经提供了LMutimate.apk的bat文件，双击即可安装，但是dianshijia.apk并未提供bat，你可以自行更改。
+
+
+![](/img/202604/xiaomi-tv-remove-boot-ads-dangbei-launcher-debloat-guide-07.webp)
+
+### Mac
+
+Mac OS同理，其中序号①②③部分的功能与windows完全一致。
+
+
+![](/img/202604/xiaomi-tv-remove-boot-ads-dangbei-launcher-debloat-guide-08.webp)
+
+在macOS 的压缩包中，我也提供了与Windows相同的LMutimate.sh用以安装LMutimate.apk，不过需要注意的是，MacOS在运行.sh脚本之前，要先将其改为可执行文件`chmod a=rwx ./remove.sh`如果提示Permission 就加`sudo chmod a=rwx ./xxxxxx.sh`
+
+
+![](/img/202604/xiaomi-tv-remove-boot-ads-dangbei-launcher-debloat-guide-09.webp)
+
+## 定义精简应用
+
+在上一节中，**序号③**便是通过adb卸载软件，想卸载的软件照猫画虎写上去，不想卸载的删除整个框住的内容或者注释掉就可以了。我相信你已经会了。
+
+
+![](/img/202604/xiaomi-tv-remove-boot-ads-dangbei-launcher-debloat-guide-10.webp)
+
+注释案例 加`#`号：
+
+
+![](/img/202604/xiaomi-tv-remove-boot-ads-dangbei-launcher-debloat-guide-11.webp)
+
+## 第三方桌面开机自启
+
+打开adb调试，通过adb或者usb 安装LMutimate.apk
+
+
+![](/img/202604/xiaomi-tv-remove-boot-ads-dangbei-launcher-debloat-guide-12.webp)
+
+打开LMutimate.apk选disable，这时候就会选中你的第三方桌面作为默认。
+
+
+![](/img/202604/xiaomi-tv-remove-boot-ads-dangbei-launcher-debloat-guide-13.webp)
+
+如果弹出窗口让你勾选默认桌面，不要勾选，直接返回，然后重启电视就行了
+            </div>
+        </article>
+    </main>
+    <footer>
+        <p>&copy; 2023 我的博客. 保留所有权利.</p>
+    </footer>
+
+    <script src="../js/marked.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const content = document.getElementById('markdown-content');
+            content.innerHTML = marked.parse(content.textContent);
+            if (window.initMarkdownEnhance) window.initMarkdownEnhance('#markdown-content');
+        });
+    </script>
+
+    <!-- 全站图片增强脚本（用于 caption 与点击放大） -->
+    <script src="../js/add-image-effects.js"></script>
+    <!-- Markdown 增强（样式 + 复制按钮） -->
+    <script src="../js/markdown-enhance.js"></script>
+</body>
+</html>
