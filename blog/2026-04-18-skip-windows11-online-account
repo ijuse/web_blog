@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>跳过win11联网账户</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/images.css">
+    <link rel="stylesheet" href="../css/markdown.css">
+</head>
+<body>
+    <header>
+        <h1>跳过win11联网账户</h1>
+        <nav>
+            <ul>
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="#about">关于</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article class="markdown-content">
+            <h2>跳过win11联网账户</h2>
+            <p>发布日期: 2026-04-18</p>
+            <div id="markdown-content">
+# 跳过win11联网账户
+在Windows 11首次开机设置（OOBE阶段）跳过联网账户登录，有以下几种常见方法，可根据实际情况选择： 
+
+## 使用命令start ms-cxh:localonly（推荐）
+
+在联网界面（“让我们为你连接到网络”页面），按下`Shift + F10`（部分笔记本需按 `Shift + Fn + F10`）打开命令提示符。 
+
+输入
+```
+start ms-cxh:localonly
+```
+并回车
+
+系统会直接跳转到本地账户创建界面，按提示输入用户名、密码等信息即可完成设置，无需重启。 
+
+## 使用命令oobe\bypassnro
+
+在联网界面按下`Shift + F10`打开命令提示符，输入
+```
+oobe\bypassnro
+```
+并回车
+
+系统会自动重启，重启后联网界面会出现`我没有 internet 连接`选项，点击该选项即可跳过联网，继续创建本地账户。 
+
+断网法 若设备支持，可拔掉网线或关闭Wi-Fi，使设备无法连接网络。
+
+在联网界面，系统可能会自动显示“我没有 internet 连接”或“跳过此步骤”选项，点击即可跳过联网，进入本地账户创建流程。
+
+*注意事项： 不同版本的Windows 11可能对跳过方法的支持略有差异，若上述方法无效，可尝试结合断网操作或检查系统版本。 若已联网并进入微软账户登录界面，上述方法可能无法直接应用，需先通过断网或命令提示符操作返回到联网界面再尝试。*
+            </div>
+        </article>
+    </main>
+    <footer>
+        <p>&copy; 2023 我的博客. 保留所有权利.</p>
+    </footer>
+
+    <script src="../js/marked.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const content = document.getElementById('markdown-content');
+            content.innerHTML = marked.parse(content.textContent);
+            if (window.initMarkdownEnhance) window.initMarkdownEnhance('#markdown-content');
+        });
+    </script>
+
+    <!-- 全站图片增强脚本（用于 caption 与点击放大） -->
+    <script src="../js/add-image-effects.js"></script>
+    <!-- Markdown 增强（样式 + 复制按钮） -->
+    <script src="../js/markdown-enhance.js"></script>
+</body>
+</html>
