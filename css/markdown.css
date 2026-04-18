@@ -1,3 +1,7 @@
+@charset 'UTF-8';
+@font-face{font-family:"h";src:url("./font/h.woff2") format("woff2"),url("./font/h.woff") format("woff"),url("./font/h.ttf") format("truetype"),url("./font/h.svg") format("svg");font-weight:normal;font-style:normal}
+@font-face{font-family:"mb";src:url("./font/mb.woff2") format("woff2"),url("./font/mb.woff") format("woff"),url("./font/mb.ttf") format("truetype"),url("./font/mb.svg") format("svg");font-weight:normal;font-style:normal}
+
 /* ========= TOC 目录样式（新增） ========= */
 .toc-nav-global {
   position: fixed;
@@ -86,7 +90,7 @@ body.has-toc .markdown-content {
 /* 基本 Markdown 容器（视你的实际容器选择器调整） */
 .markdown-content {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-               Arial, "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft Yahei",
+               Arial， "Noto Sans SC"， "PingFang SC", "Hiragino Sans GB", "Microsoft Yahei",
                sans-serif;
   color: #222;
   line-height: 1.75;
@@ -94,31 +98,36 @@ body.has-toc .markdown-content {
   word-wrap: break-word;
 }
 
-/* 标题 */
-.markdown-content h1,
-.markdown-content h2,
-.markdown-content h3,
-.markdown-content h4,
-.markdown-content h5 {
-  margin: 1.4em 0 0.6em;
-  font-weight: 700;
-  color: #111;
-  line-height: 1.25;
-}
-.markdown-content h1 { font-size: 2.0em; border-bottom: 1px solid #eee; padding-bottom: 0.18em; }
-.markdown-content h2 { font-size: 1.6em; }
-.markdown-content h3 { font-size: 1.28em; }
-.markdown-content h4 { font-size: 1.12em; }
-
 /* 段落与链接 */
 .markdown-content p { margin: 0 0 1em; color: #333; }
 .markdown-content a { color: #1a73e8; text-decoration: none; }
 .markdown-content a:hover { text-decoration: underline; }
 
 /* 列表 */
-.markdown-content ul,
-.markdown-content ol { margin: 0 0 1em 1.2em; }
-.markdown-content li { margin: 0.35em 0; }
+.markdown-content li{line-height:2em;white-space:pre-wrap;word-wrap:break-word}
+.markdown-content li::marker{color:#77777777;font-family:FontAwesome!important}
+.markdown-content li:hover::marker{color:#eb5055!important}
+a.posttittle{margin:0px;padding:0px;height:0px;width:0px;visibility:hidden;border:none!important}
+.markdown-content strong,.markdown-content b{font-weight:700;text-shadow:-1px 0 rgb(255 255 0 / 20%),0 1px rgb(255 255 0 / 20%),1px 0 rgb(255 255 0 / 20%),0 -1px rgb(255 255 0 / 20%),-1px -1px rgb(255 255 0 / 20%),1px 1px rgb(255 255 0 / 20%),-1px 1px rgb(255 255 0 / 20%),1px -1px rgb(255 255 0 / 20%);transition:.3s ease-out}
+.markdown-content strong:hover,.markdown-content b:hover{color:#fff;text-shadow:-1px 0 red,0 1px red,1px 0 red,0 -1px red,-1px -1px red,1px 1px red,-1px 1px red,1px -1px red}
+h1,.markdown-content h1{font-family:"mb","h","HarmonyOS Sans",HarmonyOS_Regular,"Noto Sans CJK SC","Sourse Han Sans CN","思源黑体 CN","Sarasa UI SC","Sarasa Gothic SC",MiSans,"PingFang SC","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif,system-ui,"Apple Color Emoji","Segoe UI Emoji"}
+h2,h3,h4,h5,h6,.markdown-content h2,.markdown-content h3,.markdown-content h4,.markdown-content h5,.markdown-content h6{position:relative;margin:15px auto 10px;font-weight:700!important;font-family:"h","HarmonyOS Sans",HarmonyOS_Regular,"Noto Sans CJK SC","Sourse Han Sans CN","思源黑体 CN","Sarasa UI SC","Sarasa Gothic SC",MiSans,"PingFang SC","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif,system-ui,"Apple Color Emoji","Segoe UI Emoji"}
+.markdown-content h1{font-size:1.6rem}
+.markdown-content h2{font-size:1.3rem;text-indent:0.4rem}
+.markdown-content h3{font-size:1.1rem;text-indent:0.8rem}
+.markdown-content h4{font-size:1rem;text-indent:1.2rem}
+.markdown-content h5{font-size:0.9rem;text-indent:1.6rem}
+.markdown-content h6{font-size:0.8rem;text-indent:2rem}
+.markdown-content h1::before,.markdown-content h2::before,.markdown-content h3::before,.markdown-content h4::before,.markdown-content h5::before,.markdown-content h6::before{font-weight:700;position:absolute;top:0;left:-20px;content:'#';color:#eb5055}
+.dark .markdown-content blockquote{background-color:#222938;color:#8d9199;border-left:4px solid #00aeff}
+.dark .markdown-content blockquote::before{content:"";display:block;background:url('data:image/svg+xml;base64,PHN2ZyB0PSIxNzExMDkwNDM0NjEzIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDE0NjIgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjYyNjEiPjxwYXRoIGQ9Ik01NDMuMjMyIDBsNzUuMDQ0NTcxIDg4LjY0OTE0M2MtMTkwLjk3NiA5Mi4xNi0yOTMuMzAyODU3IDIwNC42NTM3MTQtMjkzLjMwMjg1NyAzMTcuMTQ3NDI4IDAgMjMuOTE3NzE0IDEwLjI0IDUxLjIgMjMuODQ0NTcyIDY0LjgwNDU3MiAxMy42Nzc3MTQgMTMuNjc3NzE0IDEzLjY3NzcxNCAxMy42Nzc3MTQgOTguODg5MTQzIDM3LjUyMjI4NiAxMTYuMDA0NTcxIDMwLjcyIDE4NC4xNzM3MTQgMTIyLjgwNjg1NyAxODQuMTczNzE0IDI0Mi4xMDI4NTcgMCAxNTMuNTI2ODU3LTEyMi43MzM3MTQgMjY5LjQ1ODI4Ni0yODYuNDI3NDI5IDI2OS40NTgyODUtMTg0LjE3MzcxNCAwLTMwNi45ODA1NzEtMTQzLjIxMzcxNC0zMDYuOTgwNTcxLTM1MS4yMzIgMC0yODkuOTM4Mjg2IDE5NC40MTM3MTQtNTQ1LjY0NTcxNCA1MDQuNjg1NzE0LTY2OC40NTI1NzF6TTEzMDcuMDYyODU3IDBsNzUuMDQ0NTcyIDg4LjY0OTE0M2MtMTg3LjYxMTQyOSA4OC43MjIyODYtMjkzLjMwMjg1NyAyMDEuMjE2LTI5My4zMDI4NTggMzE3LjE0NzQyOCAwIDIzLjkxNzcxNCAxMC4yNCA1MS4yIDIzLjg0NDU3MiA2NC44MDQ1NzIgMTMuNjc3NzE0IDEzLjY3NzcxNCAxMy42Nzc3MTQgMTMuNjc3NzE0IDk4Ljg4OTE0MyAzNy41MjIyODYgMTE2LjAwNDU3MSAzMC43MiAxODQuMTczNzE0IDEyMi44MDY4NTcgMTg0LjE3MzcxNCAyNDIuMTAyODU3IDAgMTUzLjUyNjg1Ny0xMjIuNzMzNzE0IDI2OS40NTgyODYtMjg2LjQyNzQyOSAyNjkuNDU4Mjg1LTE4MC44MDkxNDMgMC0zMDYuOTgwNTcxLTE0My4yMTM3MTQtMzA2Ljk4MDU3MS0zNTEuMjMyIDAtMjg5LjkzODI4NiAxOTQuNDEzNzE0LTU0NS42NDU3MTQgNTA0LjY4NTcxNC02NjguNDUyNTcxeiIgZmlsbD0iIzAwYWVmZjg4IiBwLWlkPSI2MjYyIj48L3BhdGg+PC9zdmc+') no-repeat 50% 50%}
+.markdown-content blockquote{background:#f5f5f559;margin:1em 0 1.2em;padding:18px;overflow:auto;box-sizing:border-box;width:100%;border-left:4px solid #e5e7eb}
+.markdown-content blockquote::before{content:"";display:block;background:url('data:image/svg+xml;base64,PHN2ZyB0PSIxNzExMDg5NzYzMTk4IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjQyNTAiPjxwYXRoIGQ9Ik00MDIuMDc3MTk5IDAuMDI5MTkydjI0NC4xMDQyMjVjLTE0Ljc3MTE5NiAyLjQyMjk0My0yOS4xOTIwODYgMy41MzIyNDItNDIuOTk5OTQzIDcuMjM5NjM3YTE3NC42MjcwNiAxNzQuNjI3MDYgMCAwIDAtMTIyLjQwMjQxNyAxMjEuMzIyMzExIDI5NS4wMTUyMjMgMjk1LjAxNTIyMyAwIDAgMC0xNS4wMDQ3MzIgNzMuMjcyMTM2Yy0yLjUxMDUxOSAzMy41NzA4OTktMC42MTMwMzQgNjcuNDkyMTAzLTAuNjEzMDM0IDEwMi42MzkzNzVoMjUzLjk3MTE1djQ3My42NzA3OTFIMS41MzI1ODV2LTE4LjMwMzQzOGMwLTE4Mi44MDA4NDQtMC43NTg5OTQtMzY1LjYwMTY4OCAwLjU4Mzg0MS01NDguNDAyNTMyYTU2OC43MjAyMjQgNTY4LjcyMDIyNCAwIDAgMSA1NS45MDI4NDUtMjU1Ljk1NjIxMkEzMzkuOTcxMDM2IDMzOS45NzEwMzYgMCAwIDEgMzIxLjg1NzM0NiA4LjQ2NTcwNUMzNDcuOTU1MDcyIDQuMjkxMjM3IDM3NC41MTk4NyAyLjk0ODQwMSA0MDIuMDc3MTk5IDAuMDI5MTkyIiBmaWxsPSIjMUUxRTFFNjYiIHAtaWQ9IjQyNTEiPjwvcGF0aD48cGF0aCBkPSJNMTA4MC45OTc1NDggNTQ4LjY2NTI2VjEwMjIuMjc3NjY3SDYwNy4yOTc1NjV2LTEwLjQyMTU3NWMwLTE4NS40NTczMjQtMC43NTg5OTQtMzcwLjkxNDY0NyAwLjU1NDY1LTU1Ni4zNzE5NzFhNTY4LjMxMTUzNCA1NjguMzExNTM0IDAgMCAxIDU1LjkzMjAzNy0yNTUuOTI3MDJBMzQwLjQwODkxNyAzNDAuNDA4OTE3IDAgMCAxIDkyNy42NTE1MTkgOC40MDczMjFjMjAuMjAwOTI0LTMuMjY5NTE0IDQwLjg2ODkyMS00LjQ5NTU4MSA2MS4xMjgyMjktNi4zOTMwNjcgNS44Mzg0MTctMC41NTQ2NSAxMi4wNTYzMzIgMCAxOC44Mjg4OTYgMHYyNDIuMDMxNTg3Yy0xNC41OTYwNDMgMi4zOTM3NTEtMjkuMTkyMDg2IDMuNTMyMjQyLTQyLjg1Mzk4MyA3LjIzOTYzN2ExNzQuNzQzODI4IDE3NC43NDM4MjggMCAwIDAtMTIyLjM0NDAzMyAxMjEuMzUxNTAyIDI4OC4xNTUwODMgMjg4LjE1NTA4MyAwIDAgMC0xNC44Mjk1OCA3Mi4xNjI4MzhjLTIuNDgxMzI3IDMzLjk1MDM5Ni0wLjYxMzAzNCA2OC4yNTEwOTgtMC42MTMwMzQgMTAzLjc0ODY3NHoiIGZpbGw9IiMxRTFFMUU2NiIgcC1pZD0iNDI1MiI+PC9wYXRoPjwvc3ZnPg==') no-repeat 50% 50%;width:60px;height:32px;position:absolute;z-index:1;font-size:80px;margin:-37px 0 0 -25px;opacity:.1}
+.markdown-content blockquote p{padding-bottom:0rem;margin-bottom:0rem}
+.markdown-content pre code{font-family:"monospace",Courier,Courier New,Verdana,Arial!important;font-size:14px;line-height:1.25rem;margin:0;padding:0px 0px;color:#7d7d7e;white-space:inherit;border:0;background:0}
+.markdown-content pre figure{margin:0}
+.markdown-content p:not(ul p):not(li p){line-height:1.8rem;word-wrap:break-word;word-break:break-word;margin-bottom:1rem}
+code{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";margin:0 2px;padding:1px 5px;white-space:inherit;color:#c7254e;border:none;border-radius:6px;background-color:#f9f2f4}
 
 /* 引用 */
 .markdown-content blockquote {
@@ -131,23 +140,36 @@ body.has-toc .markdown-content {
 }
 
 /* 表格 */
-.markdown-content table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 1em;
-  overflow: auto;
-  display: block;
+table{box-shadow:0px 9px 9px rgba( 0,0,0,0.066 )}
+table,table th,table td,table tr{word-break:break-all!important}
+.markdown-content table,.content table{border-radius:5px;font-weight:normal;border:none;border-collapse:collapse;width:100%;max-width:100%;background-color:rgba(255, 255, 255, 0.068);margin-bottom:1rem}
+.markdown-content table td,.markdown-content table th,.content table td,.content table th{padding:8px}
+.markdown-content table td,.content table td{border-right:1px solid #f8f8f8;font-size:0.8rem}
+.markdown-content table thead th,.content table thead th{color:#ffffff;background:#4FC3A1}
+.markdown-content table thead th:nth-child(odd),.content table thead th:nth-child(odd){color:#ffffff;background:#324960}
+.markdown-content table tr:nth-child(even),.content table tr:nth-child(even){background:#FDFDFD}
+@media (max-width:767px){
+.markdown-content table,.content table{display:block;width:100%;margin:0px;white-space:nowrap}
+table:before{content:"横向滚动>";display:block;text-align:right;font-size:11px;color:white;padding:0 0 10px}
+.markdown-content table thead,.markdown-content table tbody,.markdown-content table thead th,.content table thead,.content table tbody,.content table thead th{display:block}
+.markdown-content table thead th:last-child,.content table thead th:last-child{border-bottom:none}
+.markdown-content table thead,.content table thead{float:left}
+.markdown-content table tbody,.content table tbody{width:auto;position:relative;overflow-x:auto}
+.markdown-content table td,.markdown-content table th,.content table td,.content table th{max-height:200px;vertical-align:middle;box-sizing:border-box;overflow-x:hidden;overflow-y:auto;max-width:120px;font-size:11.5px;word-break:break-all;text-overflow:ellipsis}
+.markdown-content table thead th,.content table thead th{text-align:left;border-bottom:1px solid #f7f7f9}
+.markdown-content table tbody tr,.content table tbody tr{display:table-cell}
+.markdown-content table tbody tr:nth-child(odd),.content table tbody tr:nth-child(odd){background:none}
+.markdown-content table tr:nth-child(even),.content table tr:nth-child(even){background:transparent}
+.markdown-content table tr td:nth-child(odd),.content table tr td:nth-child(odd){background:#F8F8F8;border-right:1px solid #E6E4E4}
+.dark .highlight,.dark table.highlight,.dark table tr:hover,.dark table tr:nth-child(2n):hover,.dark .content table tr:hover,.dark .content table tr:nth-child(2n):hover{background-color:#31304D!important}
+.dark tr td:nth-child(odd),.dark tr td:nth-child(odd){background-color:#31363F!important}
+.markdown-content table tr td:nth-child(even),.content table tr td:nth-child(even){border-right:1px solid #E6E4E4}
+.markdown-content table tbody td,.content table tbody td{display:block;text-align:center}
+.markdown-content-content .w-full{width:auto}
 }
-.markdown-content th,
-.markdown-content td {
-  border: 1px solid #e6e6e6;
-  padding: 0.5em 0.75em;
-  text-align: left;
-}
-.markdown-content th {
-  background: #fafafa;
-  font-weight: 600;
-}
+/* 图片样式 */
+.markdown-content img{background-color:#fff;-moz-box-shadow:0px 0px 5px #eee;box-shadow:0px 0px 5px #eee;position:relative;display:block;overflow:hidden;max-width:100%;height:auto;margin:0 auto;-webkit-transition:all .24s ease;transition:all .24s ease;padding:0.33rem;border-radius:9px}
+.markdown-content table img{background:none;padding:0px;border:none;border-radius:0px}
 
 /* 行内代码 */
 .markdown-content code {
