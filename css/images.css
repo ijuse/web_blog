@@ -1,0 +1,72 @@
+/* 图片包装、说明和放大遮罩样式 */
+.image-wrap {
+  display: inline-block;
+  position: relative;
+  max-width: 100%;
+  line-height: 0; /* 避免行高影响布局 */
+}
+
+.image-wrap img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  transition: transform 260ms ease, box-shadow 260ms ease;
+  will-change: transform;
+}
+
+/* 小动效：可放大时鼠标提示 */
+.image-wrap.zoomable img {
+  cursor: zoom-in;
+  transition: transform 260ms cubic-bezier(.2,.8,.2,1);
+}
+
+/* 缩放时的光环样式（只是微小视觉反馈） */
+.image-wrap.zoomable img:active {
+  transform: scale(0.995);
+}
+
+/* 图片说明文字 */
+.img-caption {
+  display: block;
+  margin-top: 6px;
+  text-align: center;
+  font-style: italic;
+  color: #666;
+  font-size: 0.95em;
+}
+
+/* 放大时的遮罩层 */
+.img-zoom-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  cursor: zoom-out;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+/* 当遮罩显示时设为不透明 */
+.img-zoom-overlay.show {
+  opacity: 1;
+}
+
+/* 放大的图片在遮罩里的样式 */
+.img-zoom-overlay img {
+  max-width: 92vw;
+  max-height: 92vh;
+  width: auto;
+  height: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  border-radius: 4px;
+  transition: transform 220ms cubic-bezier(.2,.9,.2,1);
+  cursor: zoom-out;
+}
+
+/* 防止页面滚动（当 overlay 显示时给 body 加 class 控制） */
+body.img-zoomed {
+  overflow: hidden;
+}
