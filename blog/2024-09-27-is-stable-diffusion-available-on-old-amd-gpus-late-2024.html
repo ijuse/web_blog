@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2024年9月底了，老AMD显卡还能不能吃上StableDiffusion？</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/images.css">
+    <link rel="stylesheet" href="../css/markdown.css">
+</head>
+<body>
+    <header>
+        <h1>2024年9月底了，老AMD显卡还能不能吃上StableDiffusion？</h1>
+        <nav>
+            <ul>
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="#about">关于</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article class="markdown-content">
+            <h2>2024年9月底了，老AMD显卡还能不能吃上StableDiffusion？</h2>
+            <p>发布日期: 2026-04-18</p>
+            <div id="markdown-content">
+[toc]
+
+结合秋叶最新的4.9我说说我的SD之路
+
+附上秋叶大神的整合包介绍：[网页链接](https://www.bilibili.com/video/BV1iM4y1y7oA/?spm_id_from=333.1369.0.0)
+
+先说说我的配置，我的电脑是AMD Ryzen7 3700X，内存32G，显卡是AMD的580 2048SP（8G）
+
+![电脑配置](/img/202604/is-stable-diffusion-available-on-old-amd-gpus-late-2024-01.gif)
+
+其实这个机器买来不是为了搞Ai的，而且看配置也能看出来，这机器配的事实上也有一段时间了。
+
+为了不再增加过多的投入（过些天换电脑），能玩玩SD，于是我就按照教程一步步的做，说一下我的流程
+
+首先是系统
+优先推荐Win11
+
+其次为Win10 22H2 19045
+
+如果你没有，我推荐你在这里下载：https://www.winos.me/archives/2041.html
+
+## 驱动下载
+驱动要安装两个
+
+- 是AMD官方的驱动：https://www.amd.com/zh-cn/support/download/drivers.html
+- 是AMD HIP SDK：https://www.amd.com/zh-cn/developer/resources/rocm-hub/hip-sdk.html
+- 请下载5.7.1版，Windows 10 & 11的下载地址：https://www.amd.com/en/developer/resources/rocm-hub/eula/licenses.html?filename=AMD-Software-PRO-Edition-23.Q4-Win10-Win11-For-HIP.exe
+
+### 驱动安装
+在安装驱动时，官方驱动在安装时，请务必选择推荐项**Adrenalin**
+
+![](/img/202604/is-stable-diffusion-available-on-old-amd-gpus-late-2024-02.png)
+
+
+然后，HIP的SDK就无需多说了，直接下载上面的推荐项
+
+## 配置Stable Diffusion的运行环境
+然后我们需要配置Stable Diffusion的运行环境
+
+### 安装C++
+
+先安装C++：从 https://aka.ms/vs/17/release/vc_redist.x64.exe 获取最新版本的
+
+下载ZLUDA-windows-rocm6-amd64
+
+https://github.com/lshqqytiger/ZLUDA/releases/
+
+我直接下载的是`ZLUDA-windows-rocm6-amd64`
+
+我自己用的就是这个，如果不行就换别的
+
+解压缩后，放在任意文件夹下（我放在了SD目录，也可以放在C盘，无所谓啦~）
+
+### 配置Windwos Path
+打开我的电脑——属性——高级系统设置——环境变量
+
+往下拉找到Path
+![](/img/202604/is-stable-diffusion-available-on-old-amd-gpus-late-2024-03.png)
+
+双击打开
+
+然后选择新建
+![](/img/202604/is-stable-diffusion-available-on-old-amd-gpus-late-2024-04.png)
+
+将刚才下载的zluda的放置目录，填入
+
+我的是（你替换成你自己的）
+```
+E:\Stable Diffusion\ZLUDA-windows-rocm6-amd64\zluda
+```
+然后，再填入你刚刚已经装好的AMD HIP SDK驱动的路径
+
+在这里
+```
+C:\Program Files\AMD\ROCm\5.7\bin
+```
+### 安装Git
+Git下载 https://git-scm.com/
+
+下载后全默认，一路下一步即可完成
+
+### 安装python
+有人说，AMD的U最好安装python-3.10.6-amd64这个版本，那就来呗
+
+在这里下载 https://www.python.org/downloads/release/python-3106/
+
+安装时，请务必注意，安装界面第一页的添加Path这一步一定要勾选
+
+### 安装Microsoft .NET Framework 6.0.11
+这个不用多说了吧，没这个没法启动秋叶大神的绘世
+
+下载地址 https://microsoft-net-framework.updatestar.com/
+
+### A启动器配置项
+然后我们打开`A绘世启动器.exe`
+
+首先我们要进入设置——配置模式——专家
+![](/img/202604/is-stable-diffusion-available-on-old-amd-gpus-late-2024-05.png)
+
+然后我们进入版本管理
+![](/img/202604/is-stable-diffusion-available-on-old-amd-gpus-late-2024-06.png)
+
+选择`切换分支`，我们选择`AMDGPU`主线（此时切换时间根据网络不同，时间也不一样，如果无法切换就需要科学上网）
+
+切换好分支后，将启动器关闭，然后再打开。
+
+再次回到版本管理
+
+先点击上面的`刷新列表`——然后点击**一键更新**
+
+![](/img/202604/is-stable-diffusion-available-on-old-amd-gpus-late-2024-07.png)
+
+
+我是直接切换到了9月25号版本的开发版了，也可以选择稳定版，这个看你自己的需求吧
+
+然后，我们进入高级选项
+![](/img/202604/is-stable-diffusion-available-on-old-amd-gpus-late-2024-08.png)
+
+至此，高级选项这里就配置好了。
+
+### 安装PyTorch
+![](/img/202604/is-stable-diffusion-available-on-old-amd-gpus-late-2024-09.png)
+然后我们进入环境维护
+
+选择我红框中的版本安装即可
+
+安装好以后，我们就可以启动了
+
+注意，如果期间跳出`Getting error while importing DiffusionPipeline from Diffusers`或者类似的错误
+
+用<kbd>Win+X</kbd>打开Powershell（不需要管理员）
+
+![](/img/202604/is-stable-diffusion-available-on-old-amd-gpus-late-2024-10.png)
+运行
+```
+pip install --upgrade diffusers[torch]
+```
+以及
+```
+pip install pyopenssl --upgrade
+```
+即可解决
+
+运行StableDiffusion
+请注意，首次启动和首次生成图片非常缓慢，大约20分钟
+
+![](/img/202604/is-stable-diffusion-available-on-old-amd-gpus-late-2024-11.png)
+
+![](/img/202604/is-stable-diffusion-available-on-old-amd-gpus-late-2024-12.png)
+
+![](/img/202604/is-stable-diffusion-available-on-old-amd-gpus-late-2024-13.png)
+
+这张图就是`1girl`提示词生成的
+
+只要第一个图片算好以后，就快了
+
+![](/img/202604/is-stable-diffusion-available-on-old-amd-gpus-late-2024-14.png)
+![](/img/202604/is-stable-diffusion-available-on-old-amd-gpus-late-2024-15.png)
+
+好了，大家愉快的玩耍吧~~
+
+此后生成的，就会比较快了
+![](/img/202604/is-stable-diffusion-available-on-old-amd-gpus-late-2024-16.png)
+![](/img/202604/is-stable-diffusion-available-on-old-amd-gpus-late-2024-17.png)
+            </div>
+        </article>
+    </main>
+    <footer>
+        <p>&copy; AiINK.CN 保留所有权利.</p>
+    </footer>
+
+    <script src="../js/marked.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const content = document.getElementById('markdown-content');
+            content.innerHTML = marked.parse(content.textContent);
+            if (window.initMarkdownEnhance) window.initMarkdownEnhance('#markdown-content');
+        });
+    </script>
+
+    <!-- 全站图片增强脚本（用于 caption 与点击放大） -->
+    <script src="../js/add-image-effects.js"></script>
+    <!-- Markdown 增强（样式 + 复制按钮） -->
+    <script src="../js/markdown-enhance.js"></script>
+</body>
+</html>
