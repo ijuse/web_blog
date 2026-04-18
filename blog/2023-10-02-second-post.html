@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>第二篇文章 - 我的个人博客</title>
+    <title>删除Windows回收站右键菜单的【固定到快速访问】和【固定到"开始"屏幕】</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/images.css">
     <link rel="stylesheet" href="../css/markdown.css">
@@ -20,14 +20,52 @@
     </header>
     <main>
         <article class="markdown-content">
-            <h2>第二篇文章</h2>
+            <h2>删除Windows回收站右键菜单的【固定到快速访问】和【固定到"开始"屏幕】</h2>
             <p>发布日期: 2023-10-02</p>
             <div id="markdown-content">
-# 第二篇文章
+# 删除Windows回收站右键菜单的【固定到快速访问】和【固定到"开始"屏幕】
 
-这是我的第二篇博客文章。
+## 删除-固定到开始屏幕
 
-继续探索更多内容！
+cmd打开`regedit`，复制以下直接定位
+
+```
+HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Folder\shellex\ContextMenuHandlers
+```
+
+找到`PintoStartScreen`文件夹
+
+右键删除即可
+
+---
+
+### 恢复方法
+
+在
+```
+HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Folder\shellex\ContextMenuHandlers
+```
+上单击右键，新建项`PintoStartScreen`，修改其默认值为
+ ```
+{470C0EBD-5D73-4d58-9CED-E91E22E23282}
+```
+即可
+
+## 删除-固定到快速访问
+
+发现删除这个之后，文件夹右键菜单的固定到快速访问也不见了，只能通过鼠标拖拽到快速访问那里
+
+cmd打开`regedit`，复制以下直接定位
+```
+HKEY_CLASSES_ROOT\Folder\shell\pintohome
+```
+
+新建“字符串值”，名为
+```
+Extended
+```
+### 恢复方法
+把Extended删除即可
             </div>
         </article>
     </main>
