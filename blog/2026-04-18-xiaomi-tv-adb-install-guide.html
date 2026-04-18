@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小米电视使用ADB模式安装软件</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/images.css">
+    <link rel="stylesheet" href="../css/markdown.css">
+</head>
+<body>
+    <header>
+        <h1>小米电视使用ADB模式安装软件</h1>
+        <nav>
+            <ul>
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="#about">关于</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article class="markdown-content">
+            <h2>小米电视使用ADB模式安装软件</h2>
+            <p>发布日期: 2026-04-18</p>
+            <div id="markdown-content">
+
+> 原文来自：<https://zhuanlan.zhihu.com/p/374069891>
+>
+> 作者：[余生](https://www.zhihu.com/people/yuehao301)
+
+一般来说，安卓电视直接用U盘安装软件就可以了，不过存在部分电视安装失败的情况，可通过电脑使用ADB远程安装。
+
+## 1 小米电视设置
+
+设备安全设置：设置--账号与安全--允许安装未知来源的应用--允许ADB调试。
+
+开启开发者模式：设置--关于--产品型号--遥控连续按5下OK键。
+
+查看网络IP：设置--网络--找到电视使用的局域网 IP。
+
+## 2 下载使用ADB命令
+
+电脑下载ADB Kits：<https://adbshell.com/upload/adb.zip> ，解压，能看到adb.exe，在当前目录打开CMD或者PowerShell终端。
+
+终端输入命令：`adb`可以看到相关的命令参数。
+
+连接小米电视，192.168.1.2 可以替换成你的小米电视IP，电脑需要和电视在同一局域网，过程中电视会弹出一些待确认窗口，遥控确认即可。
+
+```
+adb connect 192.168.1.2
+```
+
+查看已连接的设备：
+
+```
+adb devices
+```
+
+安装软件，把安卓软件包放在当前目录，执行以下命令便可安装软件到电视，电视端需要对一些弹窗进行确认。
+
+```
+adb install .\软件包名.apk
+```
+
+如果需要传文件，假设要传当前目录的某mp4文件到电视的download文件夹下：
+
+```
+adb push .\文件名.mp4 /mnt/sdcard/Download/
+```
+
+## 3 下载软件安装包
+
+比如YouTube电视版，当然，要搭配软路由，使用效果才更佳。
+
+<https://github.com/yuliskov/SmartTubeLegacy/releases/download/stable/smartyoutubetv_latest.apk>
+
+## 4 使用ADB安装
+
+电视会提示允许，确认即可。
+
+```
+adb install .\软件包名.apk
+```
+
+有时候要在电视输入一些链接或者文字，但字符太长，遥控不方便，也可以使用adb输入，命令：
+
+```
+adb shell input text "https://www.xxx.com"
+```
+
+结束。
+            </div>
+        </article>
+    </main>
+    <footer>
+        <p>&copy; 2023 我的博客. 保留所有权利.</p>
+    </footer>
+
+    <script src="../js/marked.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const content = document.getElementById('markdown-content');
+            content.innerHTML = marked.parse(content.textContent);
+            if (window.initMarkdownEnhance) window.initMarkdownEnhance('#markdown-content');
+        });
+    </script>
+
+    <!-- 全站图片增强脚本（用于 caption 与点击放大） -->
+    <script src="../js/add-image-effects.js"></script>
+    <!-- Markdown 增强（样式 + 复制按钮） -->
+    <script src="../js/markdown-enhance.js"></script>
+</body>
+</html>
