@@ -75,7 +75,7 @@
 
 /* 当页面存在全局 TOC 时，为正文腾出空间（桌面） */
 body.has-toc .markdown-content {
-  margin-left: 260px; /* 根据侧栏宽度调整 */
+  /* margin-left: 260px; 根据侧栏宽度调整 */
   transition: margin 0.2s;
 }
 
@@ -344,4 +344,11 @@ table:before{content:"横向滚动>";display:block;text-align:right;font-size:11
 /* 如果页面已有全局 TOC，按钮应该不要遮挡正文（微调） */
 @media (min-width: 900px) {
   body.has-toc .back-to-top-wrapper { right: 260px; } /* 保持与侧边栏间距一致 */
+}
+.toc-nav,
+.toc-inner li{
+  word-break: break-all;
+  font-family: "mb", Tahoma, Verdana, Arial;
+  font-size:11.5px!important;
+  -webkit-text-size-adjust: none;
 }
