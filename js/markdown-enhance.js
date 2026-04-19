@@ -1,5 +1,6 @@
 // 增强 Markdown 显示：为 pre>code 添加复制按钮，为行内 code 添加点击复制（并在页面显示反馈）
 // 新增：[TOC] 标签解析，生成文章目录（PC：左侧固定跟随滚动并高亮当前节；移动端：顶部折叠列表）
+// 新增：页面右下固定返回头部按钮 + 二维码生成功能（供手机扫码查看）
 // 使用：在页面渲染完 markdown（marked.parse 完成并插入 DOM）之后加载本脚本或在 DOMContentLoaded 时运行。
 // 如果你把 marked 的渲染放在 DOMContentLoaded 回调里，确保本脚本在渲染后调用或重新运行 initMarkdownEnhance()。
 
@@ -40,7 +41,7 @@
   }
 
   function copyTextToClipboard(text) {
-    if (!text) return Promise.reject(new 错误('empty'));
+    if (!text) return Promise.reject(new Error('empty'));
     if (navigator.clipboard && navigator.clipboard.writeText) {
       return navigator.clipboard.writeText(text);
     }
@@ -131,7 +132,7 @@
   function slugify(text) {
     return text.toString().trim()
       .toLowerCase()
-      .replace(/[^\n\w\-\s]/g, '')
+      .replace(/[^\w\-\s]/g, '')
       .replace(/\s+/g, '-')
       .replace(/\-+/g, '-');
   }
@@ -176,13 +177,27 @@
 
   // 生成并插入 TOC（仅当文中存在 [TOC] 标记）
   function generateTOC(rootSelector) {
-    var root = (rootSelector && document.querySelector(rootSelector)) || document;
-    var container = root.querySelector('#markdown-content');
+    // rootSelector 可以是字符串选择器，也可以是元素
+    var root = null;
+    if (rootSelector) {
+      if (typeof rootSelector === 'string') root = document.querySelector(rootSelector);
+      else if (rootSelector.nodeType === 1) root = rootSelector;
+    }
+    root = root || document;
+
+    // 如果 root 本身就是 markdown-content，则直接使用它
+    var container = null;
+    if (root.id === 'markdown-content') container = root;
+    else container = root.querySelector('#markdown-content');
     if (!container) return;
 
     // 找到 [TOC] 标记（markdown 渲染后通常是 <p>[TOC]</p> 或者包含周围空白）
+    // 改进识别：检查 textContent / innerText，并去掉可能的不可见字符
     var tocPlaceholders = Array.prototype.slice.call(container.querySelectorAll('p')).filter(function (p) {
-      return /\[\s*toc\s*\]/i.test(p.textContent.trim());
+      var txt = (p.textContent || '').trim();
+      // 把常见的 unicode 空白、NBSP 清理后再匹配
+      txt = txt.replace(/\u00A0/g, ' ').replace(/[\u2000-\u200F]/g, '').trim();
+      return /\[\s*toc\s*\]/i.test(txt);
     });
     if (!tocPlaceholders.length) return;
 
@@ -258,8 +273,13 @@
   }
 
   function bindTOCInteractions(rootSelector) {
-    var root = (rootSelector && document.querySelector(rootSelector)) || document;
-    var container = root.querySelector('#markdown-content');
+    var root = null;
+    if (rootSelector) {
+      if (typeof rootSelector === 'string') root = document.querySelector(rootSelector);
+      else if (rootSelector.nodeType === 1) root = rootSelector;
+    }
+    root = root || document;
+    var container = (root.id === 'markdown-content') ? root : root.querySelector('#markdown-content');
     if (!container) return;
 
     // 统一收集所有 toc-link（桌面与移动）
@@ -363,9 +383,109 @@
     }
   }
 
+  // QR / Back-to-top UI
+  function createBackToTopAndQR() {
+    if (document.querySelector('.back-to-top-wrapper')) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'back-to-top-wrapper';
+    wrap.innerHTML = '\n      <button class="back-to-top" aria-label="返回顶部">▲</button>\n      <button class="qr-trigger" title="生成二维码">◷</button>\n    ';
+    document.body.appendChild(wrap);
+
+    var backBtn = wrap.querySelector('.back-to-top');
+    var qrBtn = wrap.querySelector('.qr-trigger');
+
+    // 根据滚动显示/隐藏
+    function updateVisibility() {
+      if (window.scrollY > 200) wrap.classList.add('visible');
+      else wrap.classList.remove('visible');
+    }
+    updateVisibility();
+    window.addEventListener('scroll', updateVisibility, { passive: true });
+
+    backBtn.addEventListener('click', function (e) {
+      // 如果按住 Shift 则显示二维码，否则回到顶部
+      if (e.shiftKey) {
+        showPageQR();
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+
+    qrBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      showPageQR();
+    });
+  }
+
+  var _qrOverlay = null;
+  function showPageQR() {
+    if (_qrOverlay) return; // already shown
+    var overlay = document.createElement('div');
+    overlay.className = 'qr-overlay';
+    overlay.tabIndex = -1;
+
+    var box = document.createElement('div');
+    box.className = 'qr-box';
+
+    var title = document.createElement('div');
+    title.className = 'qr-title';
+    title.textContent = '扫描访问此页';
+
+    var img = document.createElement('img');
+    // 使用公共 QR 生成服务（如需离线请替换为本地实现）
+    var src = 'https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=' + encodeURIComponent(location.href);
+    img.src = src;
+    img.alt = 'QR code';
+    img.className = 'qr-image';
+
+    box.appendChild(title);
+    box.appendChild(img);
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+    _qrOverlay = overlay;
+
+    // 绑定事件：点击 overlay（但不是 box 内子元素）关闭
+    overlay.addEventListener('click', function (ev) {
+      if (ev.target === overlay) hidePageQR();
+    });
+    // 点击页面其他任意地方也要关闭：监听 document
+    setTimeout(function () {
+      document.addEventListener('click', onDocClickForQR);
+    }, 0);
+
+    // ESC 关闭
+    window.addEventListener('keydown', onKeyDownForQR);
+  }
+
+  function onDocClickForQR(e) {
+    if (!_qrOverlay) return;
+    // 如果点击在 overlay 或者 qr-box 之外，则关闭
+    var box = _qrOverlay.querySelector('.qr-box');
+    if (!box) return hidePageQR();
+    if (!box.contains(e.target)) hidePageQR();
+  }
+
+  function onKeyDownForQR(e) {
+    if (e.key === 'Escape' || e.key === 'Esc') hidePageQR();
+  }
+
+  function hidePageQR() {
+    if (!_qrOverlay) return;
+    try { document.removeEventListener('click', onDocClickForQR); } catch (e) {}
+    try { window.removeEventListener('keydown', onKeyDownForQR); } catch (e) {}
+    _qrOverlay.remove();
+    _qrOverlay = null;
+  }
+
   // 对动态注入的代码块也进行增强（MutationObserver）
   function observeForNewMarkdown(rootSelector) {
-    var root = (rootSelector && document.querySelector(rootSelector)) || document.body;
+    var root = null;
+    if (rootSelector) {
+      if (typeof rootSelector === 'string') root = document.querySelector(rootSelector);
+      else if (rootSelector.nodeType === 1) root = rootSelector;
+    }
+    root = root || document.body;
+
     var mo = new MutationObserver(function (mutations) {
       mutations.forEach(function (m) {
         if (m.type === 'childList' && m.addedNodes.length) {
@@ -374,7 +494,7 @@
             // 如果整块 markdown 被插入，运行增强
             if (node.matches && node.matches('.markdown-content')) {
               // 先处理 TOC，再处理其它增强
-              generateTOC('#' + (node.querySelector('#markdown-content') ? 'markdown-content' : 'markdown-content'));
+              generateTOC(node);
               enhanceCodeBlocks(node);
               enhanceInlineCode(node);
             } else {
@@ -398,12 +518,20 @@
 
   // 初始化方法，页面渲染后调用
   function initMarkdownEnhance(rootSelector) {
-    var root = (rootSelector && document.querySelector(rootSelector)) || document;
+    var root = null;
+    if (rootSelector) {
+      if (typeof rootSelector === 'string') root = document.querySelector(rootSelector);
+      else if (rootSelector.nodeType === 1) root = rootSelector;
+    }
+    root = root || document;
     // 先处理 TOC（因为 TOC 依赖于 headings），再增强代码块
-    generateTOC(rootSelector || '#markdown-content');
+    generateTOC(root || '#markdown-content');
     enhanceCodeBlocks(root);
     enhanceInlineCode(root);
-    observeForNewMarkdown(rootSelector);
+    observeForNewMarkdown(root);
+
+    // always create back-to-top + qr UI once
+    createBackToTopAndQR();
   }
 
   // 自动初始化：如果你的 markdown 是在 DOMContentLoaded 中生成（例如 marked.parse 在 DOMContentLoaded 回调），
