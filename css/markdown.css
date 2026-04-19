@@ -81,7 +81,14 @@ body.has-toc .markdown-content {
 
 /* 小屏媒体查询：隐藏侧边栏，显示移动折叠目录（占位处） */
 @media (max-width: 900px) {
-  .toc-nav-global { display: none; }
+  .toc-mobile {
+    display: none;
+  }
+@media (max-width: 640px) {
+  .toc-nav-global {
+    display: none;
+  }
+}
   body.has-toc .markdown-content { margin-left: 0; }
 
   /* 在占位处显示移动版目录 */
