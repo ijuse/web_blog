@@ -80,13 +80,21 @@ body.has-toc .markdown-content {
 }
 
 /* 小屏媒体查询：隐藏侧边栏，显示移动折叠目录（占位处） */
-@media (max-width: 900px) {
+/* 默认（移动端优先）：显示移动目录，隐藏侧边栏 */
+.toc-mobile {
+  display: block;   /* 或 flex/inline-block，根据实际布局 */
+}
+.toc-nav-global {
+  display: none;
+}
+
+/* 大屏：隐藏移动目录，显示侧边栏 */
+@media (min-width: 901px) {
   .toc-mobile {
     display: none;
   }
-@media (max-width: 640px) {
   .toc-nav-global {
-    display: none;
+    display: block; /* 恢复侧边栏显示 */
   }
 }
   body.has-toc .markdown-content { margin-left: 0; }
