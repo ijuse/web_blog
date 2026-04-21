@@ -101,7 +101,7 @@
 .toc-panel ul {
   list-style: none;
   margin: 0;
-  padding-left: 12px;
+  padding-left: 0.5rem;
 }
 .toc-panel li {
   margin: 6px 0;
@@ -113,12 +113,15 @@
   display: block;
   word-break: break-word;
   transition: color 0.15s;
-  font-size: 13.5px;
+  font-size: 11.5px;
+  border-bottom: 1px solid #1a73e810;
 }
 .toc-panel .toc-link:hover {
   color: #1a73e8;
+  border-bottom: 1px solid #1a73e850;
 }
 .toc-panel .toc-link.active {
+  border-left: 3px solid #1a73e8;
   color: #1a73e8;
   font-weight: 700;
   background: linear-gradient(90deg, rgba(26,115,232,0.08) 0%, transparent 90%);
