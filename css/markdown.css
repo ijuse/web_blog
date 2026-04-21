@@ -119,6 +119,7 @@
 .toc-panel .toc-link:hover {
   color: #1a73e8;
   border-bottom: 1px solid #1a73e850;
+  text-decoration: none;
 }
 .toc-panel .toc-link.active {
   border-left: 3px solid #1a73e8;
