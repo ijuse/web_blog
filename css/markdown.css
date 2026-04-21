@@ -2,115 +2,143 @@
 @font-face{font-family:"h";src:url("./fonts/h.woff2") format("woff2"),url("./fonts/h.woff") format("woff"),url("./fonts/h.ttf") format("truetype"),url("./fonts/h.svg") format("svg");font-weight:normal;font-style:normal}
 @font-face{font-family:"mb";src:url("./fonts/mb.woff2") format("woff2"),url("./fonts/mb.woff") format("woff"),url("./fonts/mb.ttf") format("truetype"),url("./fonts/mb.svg") format("svg");font-weight:normal;font-style:normal}
 
-/* ========= TOC 目录样式（新增） ========= */
-.toc-nav-global {
-  position: fixed;
-  left: 20px;
-  top: 100px;
-  width: 220px;
-  max-height: calc(100vh - 140px);
-  overflow: auto;
-  background: transparent;
-  z-index: 40;
-  padding: 8px;
+/* ========= 统一目录容器 ========= */
+.toc-panel {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  z-index: 999;
   box-sizing: border-box;
+  font-size: 14px;
+  transition: all 0.2s ease;
 }
 
-.toc-nav .toc-inner {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 6px;
-  padding: 8px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+/* 桌面端：浮动在左侧，不占用正文空间 */
+@media (min-width: 901px) {
+  .toc-panel {
+    position: fixed;
+    left: 20px;
+    top: 100px;
+    width: 240px;
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+    padding: 14px 12px;
+  }
+  .toc-panel .toc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding-bottom: 6px;
+  }
+  .toc-panel .toc-title {
+    font-weight: 700;
+    color: #1e1e1e;
+    font-size: 15px;
+  }
+  .toc-panel .toc-toggle-btn {
+    display: none; /* 桌面端不显示折叠按钮，始终展开 */
+  }
+  .toc-panel .toc-list-wrapper {
+    display: block !important;
+  }
+  /* 正文不右移，保持原有宽度 */
+  body.has-toc .markdown-content {
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
-.toc-nav .toc-inner ul {
+/* 移动端：位于文章顶部，可折叠 */
+@media (max-width: 900px) {
+  .toc-panel {
+    position: static;
+    width: 100%;
+    margin: 20px 0;
+    padding: 10px 12px;
+    background: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #eaeaea;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .toc-panel .toc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .toc-panel .toc-title {
+    font-weight: 600;
+    color: #333;
+    font-size: 16px;
+  }
+  .toc-panel .toc-toggle-btn {
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #444;
+  }
+  .toc-panel .toc-list-wrapper {
+    display: none;
+    margin-top: 12px;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 12px;
+  }
+  .toc-panel.expanded .toc-list-wrapper {
+    display: block;
+  }
+}
+
+/* 目录列表样式（桌面端和移动端共用） */
+.toc-panel ul {
   list-style: none;
   margin: 0;
-  padding-left: 8px;
+  padding-left: 12px;
 }
-
-.toc-nav .toc-inner li {
-  margin: 0.25em 0;
-  font-size: 0.95em;
+.toc-panel li {
+  margin: 6px 0;
+  line-height: 1.5;
 }
-
-.toc-nav .toc-inner a.toc-link {
-  color: #444;
+.toc-panel .toc-link {
+  color: #3a3a3a;
   text-decoration: none;
+  display: block;
+  word-break: break-word;
+  transition: color 0.15s;
+  font-size: 13.5px;
 }
-
-.toc-nav .toc-inner a.toc-link.active {
+.toc-panel .toc-link:hover {
+  color: #1a73e8;
+}
+.toc-panel .toc-link.active {
   color: #1a73e8;
   font-weight: 700;
+  background: linear-gradient(90deg, rgba(26,115,232,0.08) 0%, transparent 90%);
+  border-radius: 4px;
+  padding-left: 6px;
+  margin-left: -6px;
 }
 
-/* 页面内的占位版目录（如果作者在文中用了 [TOC]） */
-.toc-wrapper .toc-mobile {
-  display: none; /* 在大屏不显示占位移动版 */
-}
-
-/* 移动端折叠目录样式 */
-.toc-mobile {
-  display: none;
-}
-.toc-mobile .toc-toggle {
-  background: #f6f8fa;
-  border: 1px solid #e6e6e6;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-.toc-mobile .toc-mobile-list {
-  display: none;
-  margin-top: 8px;
-  border: 1px solid #eee;
-  padding: 8px;
-  border-radius: 6px;
-  background: #fff;
-}
-.toc-mobile .toc-mobile-list ul { padding-left: 0.8em; }
-.toc-mobile .toc-mobile-list a.toc-link { display: block; padding: 4px 0; color: #333; text-decoration: none; }
-.toc-mobile .toc-mobile-list a.toc-link.active { color: #1a73e8; font-weight: 700; }
-
-/* 当页面存在全局 TOC 时，为正文腾出空间（桌面） */
-body.has-toc .markdown-content {
-  /* margin-left: 260px; 根据侧栏宽度调整 */
-  transition: margin 0.2s;
-}
-
-/* 小屏媒体查询：隐藏侧边栏，显示移动折叠目录（占位处） */
-/* 默认（移动端优先）：显示移动目录，隐藏侧边栏 */
-.toc-mobile {
-  display: block;   /* 或 flex/inline-block，根据实际布局 */
-}
-.toc-nav-global {
-  display: none;
-}
-
-/* 大屏：隐藏移动目录，显示侧边栏 */
-@media (min-width: 901px) {
-  .toc-mobile {
-    display: none;
-  }
-  .toc-nav-global {
-    display: block; /* 恢复侧边栏显示 */
-  }
-}
-  body.has-toc .markdown-content { margin-left: 0; }
-
-  /* 在占位处显示移动版目录 */
-  .toc-wrapper .toc-mobile { display: block; }
-}
-/* 基本 Markdown 容器（视你的实际容器选择器调整） */
+/* 基本 Markdown 容器 */
 .markdown-content {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-               Arial， "Noto Sans SC"， "PingFang SC", "Hiragino Sans GB", "Microsoft Yahei",
+               Arial, "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft Yahei",
                sans-serif;
   color: #222;
   line-height: 1.75;
   font-size: 16px;
   word-wrap: break-word;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 /* 段落与链接 */
@@ -125,7 +153,7 @@ body.has-toc .markdown-content {
 a.posttittle{margin:0px;padding:0px;height:0px;width:0px;visibility:hidden;border:none!important}
 .markdown-content strong,.markdown-content b{font-weight:700;text-shadow:-1px 0 rgb(255 255 0 / 20%),0 1px rgb(255 255 0 / 20%),1px 0 rgb(255 255 0 / 20%),0 -1px rgb(255 255 0 / 20%),-1px -1px rgb(255 255 0 / 20%),1px 1px rgb(255 255 0 / 20%),-1px 1px rgb(255 255 0 / 20%),1px -1px rgb(255 255 0 / 20%);transition:.3s ease-out}
 .markdown-content strong:hover,.markdown-content b:hover{color:#fff;text-shadow:-1px 0 red,0 1px red,1px 0 red,0 -1px red,-1px -1px red,1px 1px red,-1px 1px red,1px -1px red}
-h1,.markdown-content h1{font-family:"mb"，"HarmonyOS Sans",HarmonyOS_Regular,"Noto Sans CJK SC","Sourse Han Sans CN","思源黑体 CN","Sarasa UI SC","Sarasa Gothic SC",MiSans,"PingFang SC","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif,system-ui,"Apple Color Emoji","Segoe UI Emoji"}
+h1,.markdown-content h1{font-family:"mb","HarmonyOS Sans",HarmonyOS_Regular,"Noto Sans CJK SC","Sourse Han Sans CN","思源黑体 CN","Sarasa UI SC","Sarasa Gothic SC",MiSans,"PingFang SC","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif,system-ui,"Apple Color Emoji","Segoe UI Emoji"}
 h2,h3,h4,h5,h6,.markdown-content h2,.markdown-content h3,.markdown-content h4,.markdown-content h5,.markdown-content h6{position:relative;margin:15px auto 10px;font-weight:700!important;font-family:"h","HarmonyOS Sans",HarmonyOS_Regular,"Noto Sans CJK SC","Sourse Han Sans CN","思源黑体 CN","Sarasa UI SC","Sarasa Gothic SC",MiSans,"PingFang SC","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif,system-ui,"Apple Color Emoji","Segoe UI Emoji"}
 .markdown-content h1{font-size:1.6rem}
 .markdown-content h2{font-size:1.3rem;text-indent:0.4rem}
@@ -144,20 +172,10 @@ h2,h3,h4,h5,h6,.markdown-content h2,.markdown-content h3,.markdown-content h4,.m
 .markdown-content p:not(ul p):not(li p){line-height:1.8rem;word-wrap:break-word;word-break:break-word;margin-bottom:1rem}
 code{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";margin:0 2px;padding:1px 5px;white-space:inherit;color:#c7254e;border:none;border-radius:6px;background-color:#f9f2f4}
 
-/* 引用 */
-.markdown-content blockquote {
-  margin: 0 0 1em;
-  padding: 0.6em 1em;
-  background: #fbfbfb;
-  border-left: 4px solid #e0e0e0;
-  color: #555;
-  border-radius: 3px;
-}
-
-/* 表格 */
-table{box-shadow:0px 9px 9px rgba( 0,0,0,0.066 )}
+/* 表格样式 (略) 保持原样 */
+table{box-shadow:0px 9px 9px rgba(0,0,0,0.066)}
 table,table th,table td,table tr{word-break:break-all!important}
-.markdown-content table,.content table{border-radius:5px;font-weight:normal;border:none;border-collapse:collapse;width:100%;max-width:100%;background-color:rgba(255, 255, 255, 0.068);margin-bottom:1rem}
+.markdown-content table,.content table{border-radius:5px;font-weight:normal;border:none;border-collapse:collapse;width:100%;max-width:100%;background-color:rgba(255,255,255,0.068);margin-bottom:1rem}
 .markdown-content table td,.markdown-content table th,.content table td,.content table th{padding:8px}
 .markdown-content table td,.content table td{border-right:1px solid #f8f8f8;font-size:0.8rem}
 .markdown-content table thead th,.content table thead th{color:#ffffff;background:#4FC3A1}
@@ -194,13 +212,13 @@ table:before{content:"横向滚动>";display:block;text-align:right;font-size:11
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Noto Mono", monospace;
   font-size: 0.95em;
   color: #c7254e;
-  cursor: pointer; /* 点击即可复制（略微提示） */
+  cursor: pointer;
 }
 
 /* 代码块样式 */
 .markdown-content pre {
   position: relative;
-  background: #0f1724; /* 深色背景更利于代码阅读，你也可以改成浅色 */
+  background: #0f1724;
   color: #e6edf3;
   padding: 1em;
   border-radius: 6px;
@@ -212,7 +230,6 @@ table:before{content:"横向滚动>";display:block;text-align:right;font-size:11
   box-shadow: 0 6px 18px rgba(16,24,40,0.06);
 }
 
-/* 代码高亮（最小）—— 保持内置色彩，推荐配合 highlight.js 或 Prism 使用以获得更好高亮效果 */
 .markdown-content pre code { background: transparent; color: inherit; }
 
 /* 复制按钮 */
@@ -235,14 +252,11 @@ table:before{content:"横向滚动>";display:block;text-align:right;font-size:11
   z-index: 5;
 }
 .code-copy-btn:hover { background: rgba(255,255,255,0.12); transform: translateY(-1px); }
-
-/* 复制成功状态 */
 .code-copy-btn.success {
   background: #16a34a;
   border-color: rgba(0,0,0,0.12);
 }
 
-/* 小提示浮层（用于行内 code 点击反馈） */
 .copy-toast {
   position: fixed;
   bottom: 28px;
@@ -260,13 +274,12 @@ table:before{content:"横向滚动>";display:block;text-align:right;font-size:11
 }
 .copy-toast.show { opacity: 1; }
 
-/* 响应式：小屏幕减小 padding、按钮尺寸 */
 @media (max-width: 640px) {
   .markdown-content pre { padding: 0.75em; font-size: 0.86em; }
   .code-copy-btn { padding: 5px 7px; font-size: 11px; top: 6px; right: 6px; }
 }
 
-/* ==== 返回顶部 & 二维码（新增） ==== */
+/* ==== 返回顶部 & 二维码 ==== */
 .back-to-top-wrapper {
   position: fixed;
   right: 18px;
@@ -276,7 +289,7 @@ table:before{content:"横向滚动>";display:block;text-align:right;font-size:11
   gap: 8px;
   align-items: center;
   z-index: 12000;
-  pointer-events: none; /* 默认不接收事件，内部按钮会启用 */
+  pointer-events: none;
   opacity: 0;
   transform: translateY(8px);
   transition: opacity 180ms ease, transform 180ms ease;
@@ -305,17 +318,14 @@ table:before{content:"横向滚动>";display:block;text-align:right;font-size:11
 }
 .back-to-top-wrapper button:hover { transform: translateY(-3px); background: rgba(26, 115, 232, 0.95); }
 
-/* 小图标样式（可根据需要替换成 svg） */
 .back-to-top { font-weight: 700; line-height: 1; }
 .qr-trigger { font-size: 14px; }
 
-/* 扩展：在窄屏上缩小按钮 */
 @media (max-width: 420px) {
   .back-to-top-wrapper { right: 12px; bottom: 12px; gap: 6px; }
   .back-to-top-wrapper button { width: 38px; height: 38px; font-size: 14px; border-radius: 8px; }
 }
 
-/* 二维码弹层 */
 .qr-overlay {
   position: fixed;
   inset: 0;
@@ -353,18 +363,4 @@ table:before{content:"横向滚动>";display:block;text-align:right;font-size:11
   background: #fff;
 }
 
-/* 使 copy-toast 与 overlay 层级兼容 */
 .copy-toast { z-index: 14000; }
-
-/* 如果页面已有全局 TOC，按钮应该不要遮挡正文（微调） */
-@media (min-width: 900px) {
-  body.has-toc .back-to-top-wrapper { right: 260px; } /* 保持与侧边栏间距一致 */
-}
-.toc-nav,
-.toc-inner li{
-  word-break: break-all;
-  display: block;
-  font-family: "h"， Tahoma, Verdana, Arial;
-  font-size:11.5px!important;
-  -webkit-text-size-adjust: none;
-}
