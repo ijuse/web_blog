@@ -1,13 +1,13 @@
 // 增强 Markdown 显示：为 pre>code 添加复制按钮，为行内 code 添加点击复制（并在页面显示反馈）
-// 新增：[TOC] 标签解析（单一 nav 元素，响应式位置由 CSS 控制）
-// 新增：页面右下固定返回头部按钮 + 二维码生成功能（供手机扫码查看）
+// 新增：[TOC] 标签解析（单一面板，响应式切换）
+// 新增：页面右下固定返回头部按钮 + 二维码生成功能
 // 使用：在页面渲染完 markdown（marked.parse 完成并插入 DOM）之后加载本脚本或在 DOMContentLoaded 时运行。
 
 (function () {
   'use strict';
 
   var TOAST_TIMEOUT = 1500;
-  var TOC_ACTIVE_OFFSET = 120; // 用于高亮判断的视窗顶部偏移（可按页面 header 高度调整）
+  var TOC_ACTIVE_OFFSET = 120; // 用于高亮判断的视窗顶部偏移
 
   function createCopyButton() {
     var btn = document.createElement('button');
@@ -39,7 +39,7 @@
   }
 
   function copyTextToClipboard(text) {
-    if (!text) return Promise.reject(new 错误('empty'));
+    if (!text) return Promise.reject(new Error('empty'));
     if (navigator.clipboard && navigator.clipboard.writeText) {
       return navigator.clipboard.writeText(text);
     }
@@ -54,7 +54,7 @@
         var ok = document.execCommand('copy');
         document.body.removeChild(ta);
         if (ok) resolve();
-        else reject(new 错误('execCommand failed'));
+        else reject(new Error('execCommand failed'));
       } catch (err) {
         document.body.removeChild(ta);
         reject(err);
@@ -153,7 +153,7 @@
     return rootUl;
   }
 
-  // 关键修改：只生成一个 nav（插入到第一个 [TOC] 占位处），移除其他占位
+  // 生成统一目录面板
   function generateTOC(rootSelector) {
     var root = null;
     if (rootSelector) {
@@ -191,137 +191,102 @@
       }
     });
 
-    var nested = buildNestedList(headings);
+    var nestedList = buildNestedList(headings);
 
-    // 创建单一 nav（包含桌面侧边栏样式与移动折叠按钮）
-    var nav = document.createElement('nav');
-    nav.className = 'toc-nav';
-    nav.setAttribute('aria-label', '文章目录');
+    // 创建统一面板
+    var panel = document.createElement('div');
+    panel.className = 'toc-panel';
 
-    var navInner = document.createElement('div');
-    navInner.className = 'toc-inner';
-    navInner.appendChild(nested.cloneNode(true));
-    nav.appendChild(navInner);
+    var header = document.createElement('div');
+    header.className = 'toc-header';
+    var titleSpan = document.createElement('span');
+    titleSpan.className = 'toc-title';
+    titleSpan.textContent = '文章目录';
+    var toggleBtn = document.createElement('button');
+    toggleBtn.type = 'button';
+    toggleBtn.className = 'toc-toggle-btn';
+    toggleBtn.setAttribute('aria-label', '展开/折叠目录');
+    toggleBtn.textContent = '☰';
+    header.appendChild(titleSpan);
+    header.appendChild(toggleBtn);
 
-    // 在同一 nav 内包含移动折叠控制（CSS 控制显示/隐藏与位置）
-    var mobile = document.createElement('div');
-    mobile.className = 'toc-mobile';
-    var toggle = document.createElement('button');
-    toggle.type = 'button';
-    toggle.className = 'toc-toggle';
-    toggle.textContent = '文章目录';
-    var mobileListWrap = document.createElement('div');
-    mobileListWrap.className = 'toc-mobile-list';
-    mobileListWrap.appendChild(nested.cloneNode(true));
-    mobile.appendChild(toggle);
-    mobile.appendChild(mobileListWrap);
+    var listWrapper = document.createElement('div');
+    listWrapper.className = 'toc-list-wrapper';
+    listWrapper.appendChild(nestedList);
 
-    // 将 nav 插入到第一个占位符位置，移除其余占位符
-    var first = tocPlaceholders[0];
-    var wrapper = document.createElement('div');
-    wrapper.className = 'toc-wrapper';
-    wrapper.appendChild(mobile);
-    wrapper.appendChild(nav);
-    first.parentNode.replaceChild(wrapper, first);
+    panel.appendChild(header);
+    panel.appendChild(listWrapper);
 
-    // 移除其他占位符（避免页面上出现多个目录）
+    var firstPlaceholder = tocPlaceholders[0];
+    firstPlaceholder.parentNode.replaceChild(panel, firstPlaceholder);
     for (var i = 1; i < tocPlaceholders.length; i++) {
       tocPlaceholders[i].remove();
     }
 
-    // 标记 body（便于 CSS 调整）
     document.body.classList.add('has-toc');
 
-    // 绑定交互
-    bindTOCInteractions(root);
+    bindTOCInteractions(panel);
   }
 
-  function bindTOCInteractions(rootSelector) {
-    var root = null;
-    if (rootSelector) {
-      if (typeof rootSelector === 'string') root = document.querySelector(rootSelector);
-      else if (rootSelector.nodeType === 1) root = rootSelector;
+  function bindTOCInteractions(panel) {
+    if (!panel) return;
+
+    var toggleBtn = panel.querySelector('.toc-toggle-btn');
+    var listWrapper = panel.querySelector('.toc-list-wrapper');
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        panel.classList.toggle('expanded');
+        var expanded = panel.classList.contains('expanded');
+        toggleBtn.setAttribute('aria-expanded', expanded);
+      });
+      panel.querySelector('.toc-header').addEventListener('click', function (e) {
+        if (e.target === toggleBtn) return;
+        if (window.innerWidth <= 900) {
+          panel.classList.toggle('expanded');
+        }
+      });
     }
-    root = root || document;
-    var container = (root.id === 'markdown-content') ? root : root.querySelector('#markdown-content');
-    if (!container) return;
 
-    var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-link'));
-
-    tocLinks.forEach(function (a) {
+    var links = panel.querySelectorAll('.toc-link');
+    links.forEach(function (a) {
       a.addEventListener('click', function (ev) {
-        if (ev.defaultPrevented || ev.button !== 0) return;
         ev.preventDefault();
         var id = a.getAttribute('href').slice(1);
         var target = document.getElementById(id);
-        if (!target) return;
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        history.replaceState && history.replaceState(null, '', '#' + id);
-        var mobileList = document.querySelector('.toc-mobile-list');
-        if (mobileList && getComputedStyle(mobileList).display !== 'none') {
-          mobileList.style.display = 'none';
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          history.replaceState && history.replaceState(null, '', '#' + id);
+          if (window.innerWidth <= 900) {
+            panel.classList.remove('expanded');
+          }
         }
       });
     });
 
-    var toggles = Array.prototype.slice.call(document.querySelectorAll('.toc-toggle'));
-    toggles.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var wrap = btn.parentNode;
-        var list = wrap.querySelector('.toc-mobile-list');
-        if (!list) return;
-        if (list.style.display === 'block') list.style.display = 'none';
-        else list.style.display = 'block';
-      });
-    });
-
-    var headingSelector = '#markdown-content h1,#markdown-content h2,#markdown-content h3,#markdown-content h4,#markdown-content h5,#markdown-content h6';
-    var headings = Array.prototype.slice.call(document.querySelectorAll(headingSelector));
-    if (!headings.length) return;
-
-    var tocLinksAll = Array.prototype.slice.call(document.querySelectorAll('.toc-link'));
+    var headings = Array.prototype.slice.call(document.querySelectorAll('#markdown-content h1,#markdown-content h2,#markdown-content h3,#markdown-content h4,#markdown-content h5,#markdown-content h6'));
     var linkMap = {};
-    tocLinksAll.forEach(function (a) {
+    links.forEach(function (a) {
       var href = a.getAttribute('href');
-      if (href && href.indexOf('#') === 0) {
-        linkMap[href.slice(1)] = a;
-      }
+      if (href && href.indexOf('#') === 0) linkMap[href.slice(1)] = a;
     });
 
     var ticking = false;
-    function onScroll() {
-      if (!ticking) {
-        window.requestAnimationFrame(function () {
-          updateActiveHeading(headings, linkMap);
-          ticking = false;
-        });
-        ticking = true;
+    function updateActive() {
+      var activeId = null;
+      for (var i = 0; i < headings.length; i++) {
+        var rect = headings[i].getBoundingClientRect();
+        if (rect.top - TOC_ACTIVE_OFFSET <= 0) activeId = headings[i].id;
       }
-    }
+      if (!activeId && headings.length) activeId = headings[0].id;
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', function () { updateActiveHeading(headings, linkMap); });
-    updateActiveHeading(headings, linkMap);
-  }
-
-  function updateActiveHeading(headings, linkMap) {
-    var activeId = null;
-    for (var i = 0; i < headings.length; i++) {
-      var rect = headings[i].getBoundingClientRect();
-      if (rect.top - TOC_ACTIVE_OFFSET <= 0) {
-        activeId = headings[i].id;
-      }
-    }
-    if (!activeId && headings.length) activeId = headings[0].id;
-    var allLinks = document.querySelectorAll('.toc-link');
-    allLinks.forEach(function (ln) { ln.classList.remove('active'); });
-    if (activeId && linkMap[activeId]) {
-      linkMap[activeId].classList.add('active');
-      var globalNav = document.querySelector('.toc-nav');
-      if (globalNav) {
-        var activeEl = linkMap[activeId];
-        var scrollContainer = globalNav.querySelector('.toc-inner') || globalNav;
-        if (activeEl && scrollContainer) {
+      links.forEach(function (ln) { ln.classList.remove('active'); });
+      if (activeId && linkMap[activeId]) {
+        linkMap[activeId].classList.add('active');
+        if (window.innerWidth > 900) {
+          var activeEl = linkMap[activeId];
+          var scrollContainer = panel;
           var aRect = activeEl.getBoundingClientRect();
           var cRect = scrollContainer.getBoundingClientRect();
           if (aRect.top < cRect.top) scrollContainer.scrollTop -= (cRect.top - aRect.top + 8);
@@ -329,9 +294,23 @@
         }
       }
     }
+
+    function onScroll() {
+      if (!ticking) {
+        window.requestAnimationFrame(function () {
+          updateActive();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', updateActive);
+    updateActive();
   }
 
-  // QR / Back-to-top UI (保留)
+  // QR / Back-to-top UI
   function createBackToTopAndQR() {
     if (document.querySelector('.back-to-top-wrapper')) return;
     var wrap = document.createElement('div');
@@ -412,7 +391,6 @@
     _qrOverlay = null;
   }
 
-  // 观察器
   function observeForNewMarkdown(rootSelector) {
     var root = null;
     if (rootSelector) {
