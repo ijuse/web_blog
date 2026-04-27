@@ -149,6 +149,14 @@
 .markdown-content p { margin: 0 0 1em; color: #333; }
 .markdown-content a { color: #1a73e8; text-decoration: none; }
 .markdown-content a:hover { text-decoration: underline; }
+.markdown-content em{
+color:#777;
+font-family: Inter, -apple-system, BlinkMacSystemFont, PingFang SC, Hiragino Sans GB, noto sans, Microsoft YaHei, Helvetica Neue, Helvetica, Arial, sans-serif;
+line-height: 1.15;
+word-wrap: break-word;
+margin: 0 auto;
+padding: 0 20px;
+}
 
 /* 列表 */
 .markdown-content li{line-height:2em;white-space:pre-wrap;word-wrap:break-word}
