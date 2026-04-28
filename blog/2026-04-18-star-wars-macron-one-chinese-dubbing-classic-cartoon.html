@@ -51,21 +51,86 @@
 
 详细介绍来自：https://zh.wikipedia.org/wiki/%E6%88%B0%E5%9C%8B%E9%AD%94%E7%A5%9E%E8%B1%AA%E5%B0%87%E8%BB%8D
 
-## 资源
-                
-[北视版星战全高清修复版](https://pan.baidu.com/s/1Z9s5YwYPdsdIbVjdgZPSkA) 提取码`jwev`
-```
-HEVC(H.265) mp4 1920*1080 59.94fps
-HDR图形白色 300 nit(81% HLG,62% PQ)基色 P3D65
-明亮度最小值： 0.005 cd/m^2
-明亮度最大值： 1,000 cd/m^2
-明亮度平均值： 200 cd/m^2
-硬件VBR 1次编码 目标码率4.20Mbps 关键帧距离：33
-最高层和最高质量 最大深度渲染
-音频编码： AAC,320Kbps,48KHz,16位立体声
-```
-贴吧原贴：https://tieba.baidu.com/p/8571463048?fr=frs
+
             </div>
+
+
+<div id="paywall_62zu96k7" style="margin: 1.5rem 0; border-left: 4px solid #3b82f6; background: #f9fafb; border-radius: 20px; padding: 1.2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <strong style="color:#1e293b;">🔒 付费/隐藏内容</strong>
+        <div style="display: flex; gap: 10px;">
+            <input type="password" id="pwd_paywall_62zu96k7" placeholder="输入解锁密码" style="padding: 8px 14px; border-radius: 60px; border:1px solid #cbd5e1;">
+            <button id="btn_paywall_62zu96k7" style="background:#3b82f6; border:none; color:white; border-radius:60px; padding:0 20px; cursor:pointer;">解锁</button>
+        </div>
+    </div>
+    <div id="content_paywall_62zu96k7" style="margin-top: 18px; display: none;"></div>
+</div>
+<script>
+(function(){
+    const container = document.getElementById('paywall_62zu96k7');
+    const pwdInput = document.getElementById('pwd_paywall_62zu96k7');
+    const unlockBtn = document.getElementById('btn_paywall_62zu96k7');
+    const contentDiv = document.getElementById('content_paywall_62zu96k7');
+    
+    const cipherB64 = "pE/1Y8OLCBp0gnRJ0Ha0+RwT+adw23ZqZKkT457Yqj50fBb/988ypmloGgKLqNjCZMkiWVYJxB/wsxf5QfMLAZbQbPuiJp1u1yYZC+ff/o0=";
+    const saltB64 = "yqIGiKYpoZbbG/btCrJL/Q==";
+    const ivB64 = "73KwrZfPqncxijjy";
+    
+    function b64ToBuffer(b64) {
+        const bin = atob(b64);
+        const buf = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+        return buf.buffer;
+    }
+    
+    async function deriveKeyFromPwd(pwd, saltBuf) {
+        const enc = new TextEncoder();
+        const keyMat = await crypto.subtle.importKey('raw', enc.encode(pwd), 'PBKDF2', false, ['deriveKey']);
+        return crypto.subtle.deriveKey(
+            { name: 'PBKDF2', salt: saltBuf, iterations: 210000, hash: 'SHA-256' },
+            keyMat,
+            { name: 'AES-GCM', length: 256 },
+            false,
+            ['decrypt']
+        );
+    }
+    
+    async function decryptContent(pwd) {
+        try {
+            const saltBuf = b64ToBuffer(saltB64);
+            const ivBuf = b64ToBuffer(ivB64);
+            const cipherBuf = b64ToBuffer(cipherB64);
+            const key = await deriveKeyFromPwd(pwd, saltBuf);
+            const decrypted = await crypto.subtle.decrypt(
+                { name: 'AES-GCM', iv: ivBuf },
+                key,
+                cipherBuf
+            );
+            return new TextDecoder().decode(decrypted);
+        } catch(e) {
+            console.warn(e);
+            return null;
+        }
+    }
+    
+    unlockBtn.addEventListener('click', async () => {
+        const pwd = pwdInput.value;
+        if (!pwd.trim()) {
+            contentDiv.innerHTML = '<span style="color:#ef4444;">⚠️ 请输入密码</span>';
+            contentDiv.style.display = 'block';
+            return;
+        }
+        contentDiv.innerHTML = '<span style="color:#6b7280;">🔍 验证中...</span>';
+        contentDiv.style.display = 'block';
+        const html = await decryptContent(pwd);
+        if (html) {
+            contentDiv.innerHTML = html;
+        } else {
+            contentDiv.innerHTML = '<span style="color:#dc2626;">❌ 密码错误，无法解锁内容</span>';
+        }
+    });
+})();
+</script>
         </article>
     </main>
     <footer>
