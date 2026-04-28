@@ -39,7 +39,7 @@
 ## 游戏资源
 ### 红色警戒2共和国之辉增强版
 
-[红色警戒2共和国之辉增强版.7z](https://url61.ctfile.com/f/30740061-1509347980-da273a?p=9527) (访问密码`9527`)
+[红色警戒2共和国之辉增强版.7z](https://anranpay.com/omn) 
 
 ```
 文件名称: 红色警戒2共和国之辉增强版.7z
@@ -52,6 +52,84 @@ CRC32: 8D0CB265
 
 
             </div>
+
+<!-- 付费隐藏内容区域 - 由加密生成器创建，AES-256-GCM -->
+<div id="paywall_x7c87blv" style="margin: 1.5rem 0; border-left: 4px solid #3b82f6; background: #f9fafb; border-radius: 20px; padding: 1.2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <strong style="color:#1e293b;">🔒 付费/隐藏内容</strong>
+        <div style="display: flex; gap: 10px;">
+            <input type="password" id="pwd_paywall_x7c87blv" placeholder="输入解锁密码" style="padding: 8px 14px; border-radius: 60px; border:1px solid #cbd5e1;">
+            <button id="btn_paywall_x7c87blv" style="background:#3b82f6; border:none; color:white; border-radius:60px; padding:0 20px; cursor:pointer;">解锁</button>
+        </div>
+    </div>
+    <div id="content_paywall_x7c87blv" style="margin-top: 18px; display: none;"></div>
+</div>
+<script>
+(function(){
+    const container = document.getElementById('paywall_x7c87blv');
+    const pwdInput = document.getElementById('pwd_paywall_x7c87blv');
+    const unlockBtn = document.getElementById('btn_paywall_x7c87blv');
+    const contentDiv = document.getElementById('content_paywall_x7c87blv');
+    
+    const cipherB64 = "irur2HLNQ0XH9CjGf0UHxikFguViKW6gH6rv+hfd1Rdpv9SteKvXBSX70bh7jF6KscxiFMz96vaBrluT/5Bj2nUx59kQc/c4CT6DgoH9JYG1bm8m4kCphIM3sNftA7SwGyKztgat";
+    const saltB64 = "Lu/lL7QODQ2zTUcv/xi0gg==";
+    const ivB64 = "zxuULCs7f7nRSfgk";
+    
+    function b64ToBuffer(b64) {
+        const bin = atob(b64);
+        const buf = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+        return buf.buffer;
+    }
+    
+    async function deriveKeyFromPwd(pwd, saltBuf) {
+        const enc = new TextEncoder();
+        const keyMat = await crypto.subtle.importKey('raw', enc.encode(pwd), 'PBKDF2', false, ['deriveKey']);
+        return crypto.subtle.deriveKey(
+            { name: 'PBKDF2', salt: saltBuf, iterations: 210000, hash: 'SHA-256' },
+            keyMat,
+            { name: 'AES-GCM', length: 256 },
+            false,
+            ['decrypt']
+        );
+    }
+    
+    async function decryptContent(pwd) {
+        try {
+            const saltBuf = b64ToBuffer(saltB64);
+            const ivBuf = b64ToBuffer(ivB64);
+            const cipherBuf = b64ToBuffer(cipherB64);
+            const key = await deriveKeyFromPwd(pwd, saltBuf);
+            const decrypted = await crypto.subtle.decrypt(
+                { name: 'AES-GCM', iv: ivBuf },
+                key,
+                cipherBuf
+            );
+            return new TextDecoder().decode(decrypted);
+        } catch(e) {
+            console.warn(e);
+            return null;
+        }
+    }
+    
+    unlockBtn.addEventListener('click', async () => {
+        const pwd = pwdInput.value;
+        if (!pwd.trim()) {
+            contentDiv.innerHTML = '<span style="color:#ef4444;">⚠️ 请输入密码</span>';
+            contentDiv.style.display = 'block';
+            return;
+        }
+        contentDiv.innerHTML = '<span style="color:#6b7280;">🔍 验证中...</span>';
+        contentDiv.style.display = 'block';
+        const html = await decryptContent(pwd);
+        if (html) {
+            contentDiv.innerHTML = html;
+        } else {
+            contentDiv.innerHTML = '<span style="color:#dc2626;">❌ 密码错误，无法解锁内容</span>';
+        }
+    });
+})();
+</script>
         </article>
     </main>
     <footer>
